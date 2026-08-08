@@ -1,0 +1,1841 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>ToxicFriend | چالش رفیق تاکسیک</title>
+
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#09090b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="ToxicFriend" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+      :root {
+        --bg: #09090b;
+        --surface: #18181b;
+        --surface-raised: #27272a;
+        --surface-sunken: #000000;
+        --border: #3f3f46;
+        --border-strong: #52525b;
+        --accent: #a3e635;
+        --accent-ink: #14532d;
+        --accent-soft: rgba(163, 230, 53, 0.1);
+        --accent-soft-strong: rgba(163, 230, 53, 0.2);
+        --blue: #38bdf8;
+        --blue-soft: rgba(56, 189, 248, 0.1);
+        --red: #f87171;
+        --red-soft: rgba(248, 113, 113, 0.1);
+        --neon-lime: #ccff00;
+        --neon-pink: #ff2b6d;
+        --neon-cyan: #00c2e0;
+        --neon-glow: rgba(204, 255, 0, 0.4);
+        --cyan-glow: rgba(0, 194, 224, 0.3);
+        --pink-glow: rgba(255, 43, 109, 0.35);
+        --text: #fafafa;
+        --text-dim: #a1a1aa;
+        --text-faint: #71717a;
+        --font-selection: "Vazirmatn", system-ui, sans-serif;
+        --mono: "JetBrains Mono", monospace;
+        --font-height: 1.6;
+        --sp-1: 4px;
+        --sp-2: 8px;
+        --sp-3: 12px;
+        --sp-4: 16px;
+        --sp-5: 20px;
+        --sp-6: 24px;
+        --sp-7: 32px;
+        --sp-8: 44px;
+        --r-xs: 8px;
+        --r-sm: 8px;
+        --r-md: 12px;
+        --r-lg: 16px;
+        --r-xl: 24px;
+        --r-pill: 999px;
+        --fs-2xs: 11px;
+        --fs-xs: 12px;
+        --fs-sm: 13px;
+        --fs-base: 14.5px;
+        --fs-md: 16px;
+        --fs-lg: 19px;
+        --fs-xl: 25px;
+        --fs-2xl: 32px;
+        --icon-sm: 13px;
+        --icon-md: 15px;
+        --icon-lg: 20px;
+        --icon-xl: 24px;
+        --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+        --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        color: var(--text);
+        background-color: var(--bg);
+        font-size: var(--fs-base);
+        font-family: var(--font-selection);
+        line-height: var(--font-height);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: var(--sp-5) var(--sp-3);
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      :is(button, input, .option-node, a):focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      main {
+        width: 100%;
+        max-width: 420px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .app-shell {
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r-xl);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .hazard-bar {
+        height: 3px;
+        width: 100%;
+        background-color: var(--accent);
+      }
+
+      header.hero {
+        padding: var(--sp-7) var(--sp-6) var(--sp-4);
+        text-align: center;
+      }
+
+      .badge-v30 {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--sp-2);
+        font-family: var(--font-selection);
+        font-size: var(--fs-xs);
+        font-weight: 700;
+        background-color: var(--surface-raised);
+        color: var(--text-dim);
+        border: 1px solid var(--border);
+        padding: 6px var(--sp-4);
+        border-radius: var(--r-pill);
+        margin-bottom: var(--sp-5);
+      }
+
+      .badge-v30 i {
+        font-size: var(--fs-sm);
+        color: var(--accent);
+      }
+
+      h1.title {
+        font-size: var(--fs-2xl);
+        font-weight: 800;
+        font-family: var(--font-selection);
+        color: var(--text);
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+
+      h1.title span {
+        color: var(--accent);
+      }
+
+      p.subtitle {
+        font-size: var(--fs-sm);
+        font-family: var(--font-selection);
+        color: var(--text-dim);
+        margin-top: var(--sp-3);
+        line-height: var(--font-height);
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      section {
+        padding: 0 var(--sp-6) var(--sp-7);
+        transition: all 0.3s ease;
+      }
+
+      #sec-result {
+        padding-top: var(--sp-7);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .field-label {
+        font-family: var(--font-selection);
+        font-size: var(--fs-sm);
+        color: var(--text-dim);
+        margin: var(--sp-5) 0 var(--sp-3);
+        display: flex;
+        align-items: center;
+        gap: var(--sp-2);
+        font-weight: 700;
+      }
+
+      .field-label i {
+        font-size: var(--icon-sm);
+        color: var(--accent);
+      }
+
+      .input-group {
+        position: relative;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        background-color: var(--surface-sunken);
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        padding: var(--sp-4) var(--sp-4) var(--sp-4) 46px;
+        color: var(--text);
+        font-family: var(--font-selection);
+        font-size: var(--fs-base);
+        line-height: var(--font-height);
+        outline: none !important;
+        transition: border-color 0.2s ease;
+      }
+
+      input[type="text"]:focus {
+        border-color: var(--accent);
+        outline: none !important;
+      }
+
+      input[type="text"]::placeholder {
+        color: var(--text-faint);
+        font-family: var(--font-selection);
+      }
+
+      .input-group i {
+        position: absolute;
+        left: 17px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-faint);
+        font-size: var(--icon-md);
+      }
+
+      .btn-action {
+        width: 100%;
+        margin-top: var(--sp-5);
+        background-color: var(--accent);
+        color: var(--accent-ink);
+        border: none;
+        outline: none !important;
+        border-radius: var(--r-md);
+        padding: var(--sp-4);
+        font-family: var(--font-selection);
+        font-weight: 800;
+        font-size: var(--fs-md);
+        line-height: var(--font-height);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--sp-2);
+        transition:
+          transform 0.2s var(--ease-spring),
+          filter 0.2s ease;
+      }
+
+      .btn-action i {
+        font-size: var(--icon-sm);
+      }
+
+      .btn-action:active {
+        transform: scale(0.97);
+      }
+
+      .btn-action:hover {
+        filter: brightness(1.08);
+      }
+
+      .btn-action.btn-inline {
+        width: auto;
+        margin-top: 0;
+        padding: var(--sp-3) var(--sp-6);
+      }
+
+      .quiz-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: var(--font-selection);
+        font-size: var(--fs-xs);
+        color: var(--text-dim);
+        margin-bottom: var(--sp-3);
+        font-weight: 700;
+      }
+
+      .quiz-header i {
+        color: var(--accent);
+      }
+
+      .quiz-header span {
+        font-family: var(--mono);
+      }
+
+      .quiz-header #quiz-cat {
+        font-family: var(--font-selection);
+      }
+
+      .progress-bar-container {
+        position: relative;
+        margin-bottom: var(--sp-6);
+        margin-top: var(--sp-3);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 4px;
+        border-radius: var(--r-pill);
+        background-color: var(--surface-sunken);
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 0%;
+        background-color: var(--accent);
+        border-radius: var(--r-pill);
+        transition: width 0.45s var(--ease-standard);
+      }
+
+      .question-card {
+        position: relative;
+        background: linear-gradient(to left, var(--surface-raised), #a2e6353b);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: var(--sp-6) var(--sp-5) var(--sp-5);
+        margin-bottom: var(--sp-6);
+        overflow: hidden;
+      }
+
+      .question-card h3 {
+        font-size: var(--fs-md);
+        font-family: var(--font-selection);
+        font-weight: 700;
+        line-height: 1.7;
+        color: var(--text);
+        position: relative;
+      }
+
+      .question-card::before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to right, var(--surface), transparent);
+      }
+
+      .option-node {
+        background-color: var(--surface-raised);
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        padding: var(--sp-4);
+        margin-bottom: var(--sp-3);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: var(--sp-3);
+        transition:
+          border-color 0.2s ease,
+          background-color 0.2s ease;
+        position: relative;
+        outline: none !important;
+      }
+
+      .option-node:hover {
+        border-color: var(--border-strong);
+        background-color: var(--surface-sunken);
+      }
+
+      .option-node.active {
+        border-color: var(--accent);
+        background-color: var(--accent-soft);
+      }
+
+      .radio-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1.5px solid var(--border-strong);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+      }
+
+      .option-node.active .radio-dot {
+        border-color: var(--accent);
+        background-color: var(--accent);
+      }
+
+      .option-node.active .radio-dot::after {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: var(--accent-ink);
+      }
+
+      .option-text {
+        font-family: var(--font-selection);
+        font-size: var(--fs-sm);
+        color: var(--text);
+        line-height: var(--font-height);
+        font-weight: 500;
+      }
+
+      .nav-controls {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--sp-4);
+        margin-top: var(--sp-6);
+      }
+
+      .btn-subtle {
+        background-color: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        font-family: var(--font-selection);
+        font-size: var(--fs-sm);
+        font-weight: 700;
+        line-height: var(--font-height);
+        padding: var(--sp-3) var(--sp-5);
+        border-radius: var(--r-md);
+        cursor: pointer;
+        transition:
+          border-color 0.2s ease,
+          color 0.2s ease;
+        outline: none !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--sp-2);
+      }
+
+      .btn-subtle i {
+        font-size: var(--icon-sm);
+      }
+
+      .btn-subtle:hover:not(:disabled) {
+        border-color: var(--border-strong);
+        color: var(--text);
+      }
+
+      .btn-subtle:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .btn-subtle.btn-strong {
+        color: var(--text);
+        border-color: var(--border-strong);
+      }
+
+      #Toxicc-toast {
+        position: fixed;
+        top: 24px;
+        left: 50%;
+        width: calc(100% - 32px);
+        max-width: 380px;
+        transform: translate(-50%, -150%);
+        background-color: var(--surface-raised);
+        color: var(--text);
+        font-family: var(--font-selection);
+        padding: 14px 18px;
+        border-radius: var(--r-lg);
+        font-size: var(--fs-sm);
+        font-weight: 700;
+        line-height: var(--font-height);
+        display: flex;
+        align-items: center;
+        gap: var(--sp-3);
+        z-index: 999;
+        transition:
+          transform 0.4s var(--ease-spring),
+          opacity 0.3s ease,
+          visibility 0.3s ease;
+        pointer-events: none;
+        border: 1px solid var(--border-strong);
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #Toxicc-toast i {
+        font-size: 18px;
+        color: var(--accent);
+        flex-shrink: 0;
+      }
+
+      #Toxicc-toast.show {
+        transform: translate(-50%, 0);
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* PWA Install Modal Styles */
+      .pwa-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--sp-4);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .pwa-modal-backdrop.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .pwa-modal {
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--r-xl);
+        padding: var(--sp-6);
+        width: 100%;
+        max-width: 360px;
+        text-align: center;
+        transform: scale(0.9);
+        transition: transform 0.3s var(--ease-spring);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      }
+      .pwa-modal-backdrop.show .pwa-modal {
+        transform: scale(1);
+      }
+      .pwa-icon-box {
+        width: 64px;
+        height: 64px;
+        background: var(--accent-soft);
+        border: 1px solid var(--accent);
+        border-radius: var(--r-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto var(--sp-4);
+        font-size: 28px;
+        color: var(--accent);
+      }
+      .pwa-title {
+        font-size: var(--fs-lg);
+        font-weight: 800;
+        margin-bottom: var(--sp-2);
+        color: var(--text);
+      }
+      .pwa-desc {
+        font-size: var(--fs-sm);
+        color: var(--text-dim);
+        line-height: 1.6;
+        margin-bottom: var(--sp-6);
+      }
+      .pwa-actions {
+        display: flex;
+        flex-direction: column;
+        gap: var(--sp-3);
+      }
+      .pwa-btn-install {
+        background-color: var(--accent);
+        color: var(--accent-ink);
+        border: none;
+        border-radius: var(--r-md);
+        padding: var(--sp-3);
+        font-family: var(--font-selection);
+        font-weight: 800;
+        font-size: var(--fs-base);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--sp-2);
+      }
+      .pwa-btn-later {
+        background: transparent;
+        border: none;
+        color: var(--text-faint);
+        font-family: var(--font-selection);
+        font-size: var(--fs-sm);
+        font-weight: 700;
+        cursor: pointer;
+        padding: var(--sp-2);
+      }
+
+      #story-card {
+        background-color: #04070d;
+        border: 2px solid var(--neon-lime);
+        border-radius: var(--r-xl);
+        padding: var(--sp-6) var(--sp-5);
+        position: relative;
+        overflow: hidden;
+        color: var(--text);
+        box-shadow: 0 0 45px rgba(0, 0, 0, 0.95);
+      }
+
+      #story-card::before {
+        content: "Toxic-REPORT";
+        position: absolute;
+        bottom: 18px;
+        left: -38px;
+        background-color: var(--neon-lime);
+        color: #000;
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 900;
+        padding: 6px 38px;
+        transform: rotate(45deg);
+        box-shadow: 0 0 10px var(--neon-glow);
+      }
+
+      .card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: var(--sp-3);
+        margin-bottom: var(--sp-5);
+      }
+
+      .user-tag {
+        font-size: 17px;
+        font-weight: 900;
+        color: #fff;
+        font-family: var(--font-selection);
+      }
+
+      .audit-id {
+        font-family: var(--mono);
+        font-size: var(--fs-2xs);
+        color: var(--neon-lime);
+        margin-top: 2px;
+      }
+
+      .card-top .audit-icon {
+        font-size: var(--icon-xl);
+        color: var(--neon-lime);
+        margin-top: -10px !important;
+        margin-left: 10px !important;
+      }
+
+      .score-radar {
+        text-align: center;
+        margin: var(--sp-5) 0;
+        position: relative;
+      }
+
+      .score-num {
+        font-family: var(--mono);
+        font-size: 62px;
+        font-weight: 900;
+        color: var(--neon-lime);
+        text-shadow: 0 0 30px var(--neon-glow);
+        line-height: 1;
+        letter-spacing: -0.04em;
+      }
+
+      .score-label {
+        font-size: var(--fs-xs);
+        color: var(--text-faint);
+        margin-top: var(--sp-2);
+        letter-spacing: 0.1em;
+        font-weight: 800;
+        font-family: var(--font-selection);
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--sp-2);
+        margin-bottom: var(--sp-5);
+      }
+
+      .metric-box {
+        background-color: rgba(255, 255, 255, 0.025);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: var(--r-sm);
+        padding: var(--sp-3) var(--sp-2);
+        text-align: center;
+      }
+
+      .metric-val {
+        font-family: var(--mono);
+        font-size: var(--fs-base);
+        font-weight: 900;
+      }
+
+      #m-pich {
+        color: var(--neon-cyan);
+      }
+      #m-refaqat {
+        color: var(--neon-lime);
+      }
+      #m-dorogh {
+        color: var(--neon-pink);
+      }
+
+      .metric-track {
+        height: 4px;
+        border-radius: var(--r-pill);
+        background-color: rgba(255, 255, 255, 0.08);
+        margin-top: var(--sp-2);
+        overflow: hidden;
+      }
+
+      .metric-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: var(--r-pill);
+        transition: width 0.8s var(--ease-standard);
+      }
+
+      #m-pich-bar {
+        background-color: var(--neon-cyan);
+        box-shadow: 0 0 8px var(--cyan-glow);
+      }
+      #m-refaqat-bar {
+        background-color: var(--neon-lime);
+        box-shadow: 0 0 8px var(--neon-glow);
+      }
+      #m-dorogh-bar {
+        background-color: var(--neon-pink);
+        box-shadow: 0 0 8px var(--pink-glow);
+      }
+
+      .metric-lbl {
+        font-size: var(--fs-2xs);
+        color: var(--text-dim);
+        margin-top: var(--sp-2);
+        font-weight: 700;
+        font-family: var(--font-selection);
+      }
+
+      .analysis-card {
+        background-color: rgba(0, 0, 0, 0.65);
+        border-right: 4px solid var(--neon-lime);
+        padding: var(--sp-4);
+        border-radius: var(--r-sm);
+        margin-bottom: var(--sp-5);
+      }
+
+      .analysis-title {
+        font-size: var(--fs-md);
+        font-weight: 900;
+        color: var(--neon-lime);
+        margin-bottom: var(--sp-2);
+        font-family: var(--font-selection);
+      }
+
+      .analysis-body {
+        font-size: var(--fs-sm);
+        line-height: var(--font-height);
+        color: #cbd5e1;
+        font-family: var(--font-selection);
+      }
+
+      .traits-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--sp-2);
+        margin-bottom: var(--sp-5);
+      }
+
+      .trait-tag {
+        background-color: rgba(204, 255, 0, 0.12);
+        border: 1px solid rgba(204, 255, 0, 0.3);
+        color: var(--neon-lime);
+        font-size: var(--fs-2xs);
+        font-weight: 800;
+        padding: 5px var(--sp-3);
+        border-radius: var(--r-pill);
+        font-family: var(--font-selection);
+      }
+
+      .card-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: var(--sp-3);
+        font-family: var(--font-selection);
+        font-size: var(--fs-2xs);
+        color: var(--text-faint);
+      }
+
+      .accent-lime {
+        color: var(--neon-lime);
+        text-align: center !important;
+        width: 100% !important;
+        margin-top: 5px !important;
+        margin-bottom: -5px !important;
+      }
+
+      .challenge-banner {
+        background-color: var(--surface-raised);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: var(--sp-5);
+        margin-bottom: var(--sp-6);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .challenge-banner .cb-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--sp-3);
+      }
+
+      .challenge-banner .cb-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background-color: var(--surface-sunken);
+        color: var(--accent);
+        border: 1px solid var(--border);
+        padding: 4px 12px;
+        border-radius: var(--r-pill);
+        font-family: var(--font-selection);
+        font-size: var(--fs-xs);
+        font-weight: 800;
+      }
+
+      .challenge-banner .cb-fire-icon {
+        font-size: 20px;
+        color: var(--accent);
+      }
+
+      .challenge-banner .cb-main {
+        font-size: var(--fs-md);
+        font-weight: 700;
+        line-height: 1.7;
+        color: var(--text);
+        font-family: var(--font-selection);
+        position: relative;
+        z-index: 1;
+      }
+
+      .challenge-banner .cb-main strong.user-highlight {
+        color: var(--blue);
+        font-weight: 800;
+        font-size: 17px;
+        font-family: var(--font-selection);
+      }
+
+      .challenge-banner .cb-main strong.score-highlight {
+        color: var(--accent);
+        font-weight: 800;
+        font-size: 16px;
+        font-family: var(--mono);
+        background-color: var(--accent-soft);
+        padding: 2px 8px;
+        border-radius: var(--r-xs);
+      }
+
+      .challenge-banner .cb-sub {
+        font-size: var(--fs-xs);
+        color: var(--text-dim);
+        margin-top: var(--sp-3);
+        font-family: var(--font-selection);
+        line-height: 1.6;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .tag-friend-box {
+        margin-top: var(--sp-6);
+      }
+
+      .tag-friend-box label {
+        font-size: var(--fs-sm);
+        color: var(--text-dim);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: var(--sp-2);
+        margin-bottom: var(--sp-3);
+        font-family: var(--font-selection);
+      }
+
+      .tag-friend-box label i {
+        color: var(--accent);
+      }
+
+      .link-row {
+        display: flex;
+        align-items: center;
+        gap: var(--sp-3);
+        background-color: var(--surface-sunken);
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        padding: var(--sp-4);
+        margin-top: var(--sp-3);
+      }
+
+      .link-row span {
+        flex: 1;
+        min-width: 0;
+        font-family: var(--font-selection);
+        font-size: var(--fs-xs);
+        color: var(--text-dim);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        direction: ltr;
+        text-align: right;
+      }
+
+      .link-row button {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--sp-2);
+        background-color: var(--accent-soft);
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        border-radius: var(--r-sm);
+        padding: var(--sp-2) var(--sp-3);
+        font-family: var(--font-selection);
+        font-size: var(--fs-xs);
+        font-weight: 800;
+        cursor: pointer;
+        outline: none !important;
+        transition: background-color 0.2s ease;
+      }
+
+      .link-row button:hover {
+        background-color: var(--accent-soft-strong);
+      }
+
+      .link-row button:active {
+        transform: scale(0.96);
+      }
+
+      .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--sp-3);
+        margin-top: var(--sp-5);
+      }
+
+      footer.credit {
+        text-align: center;
+        margin-top: var(--sp-5);
+        font-size: var(--fs-xs);
+        color: var(--text-faint);
+        font-family: var(--font-selection);
+      }
+
+      footer.credit a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 800;
+        font-family: var(--font-selection);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+
+      @media (max-width: 380px) {
+        header.hero {
+          padding: var(--sp-6) var(--sp-4) var(--sp-3);
+        }
+        section {
+          padding: 0 var(--sp-4) var(--sp-6);
+        }
+        .score-num {
+          font-size: 52px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <div class="app-shell">
+        <div class="hazard-bar"></div>
+
+        <section id="sec-intro" style="padding-top: var(--sp-6)">
+          <div id="challenge-banner" class="challenge-banner hidden">
+            <div class="cb-header">
+              <div class="cb-badge">
+                <i class="fa-solid fa-bolt-lightning"></i> رقابت رفقای تاکسیک
+              </div>
+              <i class="fa-solid fa-fire-flame-curved cb-fire-icon"></i>
+            </div>
+
+            <div class="cb-main">
+              رفیقت
+              <strong id="cb-ref-name" class="user-highlight">@کاربر</strong>
+              دستت رو خونده! با
+              <strong id="cb-ref-score" class="score-highlight">56%</strong>
+              شاخص تاکسیک بودن رسماً گردوخاک کرده! 💥
+            </div>
+
+            <div class="cb-sub">
+              <i class="fa-solid fa-hand-fist" style="color: var(--accent)"></i>
+              میدان آماده ست... ببینم تو چقدر تاکسیکی؟ 👀
+            </div>
+          </div>
+
+          <header
+            class="hero"
+            id="main-header"
+            style="padding: 0 0 var(--sp-4) 0"
+          >
+            <div class="badge-v30">
+              <i class="fa-solid fa-gamepad"></i> چالش رفیق تاکسیک
+            </div>
+
+            <h1 class="title">Toxic\<span>Friend</span></h1>
+
+            <p class="subtitle">
+              ۱۰ سوال چالشی، بدون تعارف! ببین چقدر رفیق تاکسیک و رو اعصابی هستی،
+              بعد بفرست واسه رفقات تا کم نیارن 👀
+            </p>
+          </header>
+
+          <form id="form-init">
+            <label class="field-label">
+              <i class="fa-solid fa-at"></i> آیدی اینستاگرامت چیه؟ زود بگو بریم
+              تو کارش 🔥
+            </label>
+
+            <div class="input-group">
+              <i class="fa-solid fa-ghost"></i>
+              <input type="text" id="inp-username" placeholder="con.dev" />
+            </div>
+
+            <button type="submit" class="btn-action">
+              <span style="font-family: var(--font-selection)">بزن بریم</span>
+              <i class="fa-solid fa-bolt-lightning"></i>
+            </button>
+          </form>
+        </section>
+
+        <section id="sec-quiz" class="hidden" style="padding-top: var(--sp-6)">
+          <div class="quiz-header">
+            <span id="quiz-cat">
+              <i class="fa-solid fa-layer-group"></i> دسته بندی
+            </span>
+            <span><span id="quiz-num">1</span>/10</span>
+          </div>
+
+          <div class="progress-bar-container">
+            <div class="progress-bar">
+              <div id="progress-fill" class="progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="question-card">
+            <h3 id="quiz-qtext">در حال بارگذاری سوال...</h3>
+          </div>
+
+          <div id="options-wrap"></div>
+
+          <div class="nav-controls">
+            <button id="btn-back" class="btn-subtle" disabled>
+              <i class="fa-solid fa-arrow-right"></i> قبلی
+            </button>
+
+            <button id="btn-next" class="btn-action btn-inline">
+              <span style="font-family: var(--font-selection)">بعدی</span>
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+          </div>
+        </section>
+
+        <section id="sec-result" class="hidden">
+          <div id="story-card">
+            <div class="card-top">
+              <div>
+                <div class="user-tag" id="res-user">@username</div>
+                <div class="audit-id">
+                  AUDIT-ID: #<span id="res-id">9042</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-radiation audit-icon"></i>
+            </div>
+
+            <div class="score-radar">
+              <div class="score-num" id="res-percent">0%</div>
+              <div class="score-label">(ToxicC INDEX)</div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-box">
+                <div class="metric-val" id="m-pich">0%</div>
+                <div class="metric-track">
+                  <div class="metric-fill" id="m-pich-bar"></div>
+                </div>
+                <div class="metric-lbl">تاکسیک</div>
+              </div>
+
+              <div class="metric-box">
+                <div class="metric-val" id="m-refaqat">0%</div>
+                <div class="metric-track">
+                  <div class="metric-fill" id="m-refaqat-bar"></div>
+                </div>
+                <div class="metric-lbl">رفاقت</div>
+              </div>
+
+              <div class="metric-box">
+                <div class="metric-val" id="m-dorogh">0%</div>
+                <div class="metric-track">
+                  <div class="metric-fill" id="m-dorogh-bar"></div>
+                </div>
+                <div class="metric-lbl">فیک بودن</div>
+              </div>
+            </div>
+
+            <div class="analysis-card">
+              <div class="analysis-title" id="res-title">عنوان تحلیل</div>
+              <div class="analysis-body" id="res-body">توضیحات...</div>
+            </div>
+
+            <div class="traits-wrap" id="res-traits-list"></div>
+
+            <div class="card-bottom w-100">
+              <strong class="accent-lime">con.dev</strong>
+            </div>
+          </div>
+
+          <div class="tag-friend-box">
+            <label>
+              <i class="fa-solid fa-crosshairs"></i> میخوای کدوم رفیقتو چالش
+              کنی؟ (اختیاری)
+            </label>
+
+            <div class="input-group">
+              <i class="fa-solid fa-at"></i>
+              <input
+                type="text"
+                id="inp-friend"
+                placeholder="آیدی یا اسم رفیقت... مثلا con.dev"
+              />
+            </div>
+
+            <div class="link-row hidden" id="link-row-wrap">
+              <span id="challenge-link-preview"
+                >لینک چالش اختصاصی تو، آماده ست...</span
+              >
+              <button id="btn-copy-link" type="button">
+                <i class="fa-solid fa-copy"></i> کپی لینک
+              </button>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button id="btn-share-native" class="btn-action">
+              <i class="fa-solid fa-share-nodes"></i
+              ><span style="font-family: var(--font-selection)"
+                >استوریش کن</span
+              >
+            </button>
+
+            <button id="btn-save-img" class="btn-subtle btn-strong">
+              <i class="fa-solid fa-download"></i
+              ><span>عکس نتیجه رو بگیر و پز بده 😎</span>
+            </button>
+
+            <button id="btn-reset" class="btn-subtle">
+              <i class="fa-solid fa-rotate-right"></i><span>از اول از اول</span>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <footer class="credit">
+        <p>
+          <a href="https://instagram.com/con.dev" target="_blank">Con.Dev</a>
+        </p>
+      </footer>
+
+      <div id="Toxicc-toast">
+        <i class="fa-solid fa-face-laugh-wink"></i>
+        <span id="toast-msg">پیام هشدار!</span>
+      </div>
+
+      <!-- PWA Install Modal -->
+      <div id="pwa-install-modal" class="pwa-modal-backdrop">
+        <div class="pwa-modal">
+          <div class="pwa-icon-box">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+          </div>
+          <h3 class="pwa-title">نصب نسخه اپلیکیشن</h3>
+          <p class="pwa-desc">
+            برای تجربه سریع تر، دسترسی آفلاین و اجرای راحت تر چالش، نسخه PWA
+            اپلیکیشن ToxicFriend رو به صفحه اصلی گوشیت اضافه کن! 🚀
+          </p>
+          <div class="pwa-actions">
+            <button id="pwa-install-btn" class="pwa-btn-install">
+              <i class="fa-solid fa-download"></i> نصب سریع اپ
+            </button>
+            <button id="pwa-close-btn" class="pwa-btn-later">فعلاً نه</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Register Service Worker for PWA
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((reg) => console.log("SW registered!", reg))
+            .catch((err) => console.log("SW registration failed:", err));
+        });
+      }
+
+      // PWA Install Prompt Logic
+      let deferredPrompt;
+      const pwaModal = document.getElementById("pwa-install-modal");
+      const installBtn = document.getElementById("pwa-install-btn");
+      const closeBtn = document.getElementById("pwa-close-btn");
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        // Show modal after 1.5 seconds on first entry
+        setTimeout(() => {
+          if (!localStorage.getItem("pwa_installed_dismissed")) {
+            pwaModal.classList.add("show");
+          }
+        }, 1500);
+      });
+
+      installBtn.addEventListener("click", async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === "accepted") {
+            console.log("User accepted the install prompt");
+          }
+          deferredPrompt = null;
+        }
+        pwaModal.classList.remove("show");
+      });
+
+      closeBtn.addEventListener("click", () => {
+        pwaModal.classList.remove("show");
+        localStorage.setItem("pwa_installed_dismissed", "true");
+      });
+
+      const ToxicC_WARNINGS = [
+        "کجا با این عجله مشتی؟ اول یه گزینه تیک بزن! 😜",
+        "می خوای از زیر سوتی دادن در بری؟ سریع یکیشو بزن!",
+        "چی شد؟ دستت لرزید؟ بزن روی یه گزینه بریم بعدی! 🧠",
+        "غیب گو نیستم که! تا گزینه نزنی راه نمیدم بری بعدی.",
+        "ای بابا! بدون جواب دادن داری میری؟ سریع بزن روی یکی! 🤦‍♂️",
+        "اینجوری که داری در میری درصد تاکسیک بودنت رو ۱۰۰ بزنم؟ انتخاب کن!",
+      ];
+
+      const DATABASE = [
+        {
+          cat: "زمان بندی",
+          q: "قرار ساعت ۶ عصر کافه است. کی راه میفتی؟",
+          opts: [
+            {
+              txt: "۵:۴۵ اونجام؛ دقیق و آنکارد.",
+              pts: 0,
+              tag: "آنکارد ⏰",
+              pich: 0,
+              dorogh: 0,
+            },
+            {
+              txt: "ساعت ۶ تازه میرم حموم، ۶:۳۰ میگم تو ترافیکم!",
+              pts: 20,
+              tag: "ترافیک ساز 🚗",
+              pich: 25,
+              dorogh: 15,
+            },
+            {
+              txt: "ساعت ۷ پیام میدم خواب موندم کنسله!",
+              pts: 35,
+              tag: "کنسل کننده 💀",
+              pich: 35,
+              dorogh: 20,
+            },
+          ],
+        },
+        {
+          cat: "ارتباطات",
+          q: "دوستت ویس ۱۰ دقیقه ای فرستاده چیکار میکنی؟",
+          opts: [
+            {
+              txt: "کامل گوش میدم و جواب میدم.",
+              pts: 0,
+              tag: "شنونده 🎧",
+              pich: 0,
+              dorogh: 0,
+            },
+            {
+              txt: "میذارم روی ۲x و سرتهشو با ایموجی می بندم.",
+              pts: 15,
+              tag: "عجول ⏩",
+              pich: 10,
+              dorogh: 10,
+            },
+            {
+              txt: "سین میزنم ولی ۳ روز بعد میگم یادم رفت!",
+              pts: 30,
+              tag: "بی تفاوت 🪦",
+              pich: 30,
+              dorogh: 25,
+            },
+          ],
+        },
+        {
+          cat: "شبکه های اجتماعی",
+          q: "عکس دوتایی گرفتید؛ تو عالی افتادی رفیقت بد افتاده:",
+          opts: [
+            {
+              txt: "استوری نمیکنم تا هر دو خوب بیفتیم.",
+              pts: 0,
+              tag: "با معرفت 🛡️",
+              pich: 0,
+              dorogh: 0,
+            },
+            {
+              txt: "استیکر کوچیک روی صورتش میذارم استوری میکنم.",
+              pts: 10,
+              tag: "ملاحظه کار 🎭",
+              pich: 5,
+              dorogh: 5,
+            },
+            {
+              txt: "استوری میکنم و بزرگ هم تگش میکنم!",
+              pts: 25,
+              tag: "تخریب گر 📸",
+              pich: 20,
+              dorogh: 10,
+            },
+          ],
+        },
+        {
+          cat: "مالی",
+          q: "موقع حساب کردن صورت حساب کافه:",
+          opts: [
+            {
+              txt: "اولین نفر دونگم رو آنلاین می زنم.",
+              pts: 0,
+              tag: "خوش حساب 💳",
+              pich: 0,
+              dorogh: 0,
+            },
+            {
+              txt: "میگم کی کارت بکشم؟ ولی دستم سمت جیبم نمیره!",
+              pts: 15,
+              tag: "تعارفی 🎭",
+              pich: 15,
+              dorogh: 20,
+            },
+            {
+              txt: "دقیقاً اون لحظه میرم دستشویی!",
+              pts: 25,
+              tag: "فراری 🏃‍♂️",
+              pich: 30,
+              dorogh: 15,
+            },
+          ],
+        },
+        {
+          cat: "همدلی",
+          q: "رفیقت میگه نیاز داره حرف بزنه، واکنشت چیه؟",
+          opts: [
+            {
+              txt: "برنامه هامو خالی میکنم و میرم پیشش.",
+              pts: 0,
+              tag: "پایه 🫂",
+              pich: 0,
+              dorogh: 0,
+            },
+            {
+              txt: "میگم سرم شلوغه ولی استوری کافه میذارم!",
+              pts: 25,
+              tag: "دروغگو 🤥",
+              pich: 20,
+              dorogh: 35,
+            },
+            {
+              txt: "سین نمیکنم تا فردا صبح!",
+              pts: 35,
+              tag: "گریزان 🚫",
+              pich: 35,
+              dorogh: 10,
+            },
+          ],
+        },
+        {
+          cat: "احترام",
+          q: "رفیقت وسایل جدید خریده و ذوق داره:",
+          opts: [
+            {
+              txt: "تعریف میکنم و ذوقش رو خراب نمیکنم.",
+              pts: 0,
+              tag: "مشوق 👏",
+              pich: 0,
+              dorogh: 0,
+            },
+            {
+              txt: "میگم قشنگه ولی فلان مدل بهتر بود.",
+              pts: 15,
+              tag: "نقد کننده 🧐",
+              pich: 10,
+              dorogh: 5,
+            },
+            {
+              txt: "میگم گرون انداختن بهت، نصف این قیمت بود!",
+              pts: 30,
+              tag: "ذوق کش 🗡️",
+              pich: 25,
+              dorogh: 15,
+            },
+          ],
+        },
+        {
+          cat: "امانتداری",
+          q: "وقتی رفیقت یک راز مهم رو برات تعریف میکنه:",
+          opts: [
+            {
+              txt: "امانت نگه میدارم و به کسی نمیگم.",
+              pts: 0,
+              tag: "صندوقچه راز 🔒",
+              pich: 0,
+              dorogh: 0,
+            },
+            {
+              txt: "فقط به صمیمی ترین رفیق دیگم میگم به کسی نگه!",
+              pts: 20,
+              tag: "رادیو 📻",
+              pich: 15,
+              dorogh: 20,
+            },
+            {
+              txt: "وسط حرفش میگم این که چیزی نیست منو بگو!",
+              pts: 30,
+              tag: "خودمرکزبین 🌀",
+              pich: 20,
+              dorogh: 10,
+            },
+          ],
+        },
+        {
+          cat: "موفقیت",
+          q: "رفیقت تو یک آزمون یا مصاحبه کاری قبول شده:",
+          opts: [
+            {
+              txt: "تبریک میگم و واقعاً خوشحال میشم.",
+              pts: 0,
+              tag: "حامی 🌟",
+              pich: 0,
+              dorogh: 0,
+            },
+            {
+              txt: "میگم مبارکه ولی شانسی بود سوالا ساده بود.",
+              pts: 20,
+              tag: "تضعیف کننده 📉",
+              pich: 15,
+              dorogh: 10,
+            },
+            {
+              txt: "تا ۳ روز جواب پیام هاش رو نمیدم!",
+              pts: 30,
+              tag: "حسود 🐍",
+              pich: 30,
+              dorogh: 15,
+            },
+          ],
+        },
+        {
+          cat: "مسئولیت",
+          q: "برنامه سفر چیدید؛ ۱ ساعت قبل حرکت:",
+          opts: [
+            {
+              txt: "آن تایم حاضرم.",
+              pts: 0,
+              tag: "منظم 🎒",
+              pich: 0,
+              dorogh: 0,
+            },
+            {
+              txt: "بهانه میارم حالم بده شما برید!",
+              pts: 15,
+              tag: "کنسل کننده ⚠️",
+              pich: 20,
+              dorogh: 25,
+            },
+            {
+              txt: "گوشیو خاموش میکنم و میخوابم!",
+              pts: 35,
+              tag: "ناپدیدشونده 👻",
+              pich: 35,
+              dorogh: 20,
+            },
+          ],
+        },
+        {
+          cat: "تولد",
+          q: "روز تولد صمیمی ترین رفیقت رسیده:",
+          opts: [
+            {
+              txt: "ساعت ۱۲ پیام یا زنگ میزنم.",
+              pts: 0,
+              tag: "وفادار 🎂",
+              pich: 0,
+              dorogh: 0,
+            },
+            {
+              txt: "یه پیام ساده میفرستم.",
+              pts: 10,
+              tag: "رفع تکلیفی 📝",
+              pich: 5,
+              dorogh: 5,
+            },
+            {
+              txt: "یادم میره و هفته بعد یادم میاد!",
+              pts: 25,
+              tag: "فراموشکار 🧊",
+              pich: 25,
+              dorogh: 15,
+            },
+          ],
+        },
+      ];
+
+      let user = "";
+      let idx = 0;
+      let answers = new Array(DATABASE.length).fill(null);
+      let toastTimer = null;
+      let calculatedPercent = 0;
+
+      const secIntro = document.getElementById("sec-intro");
+      const secQuiz = document.getElementById("sec-quiz");
+      const secResult = document.getElementById("sec-result");
+      const mainHeader = document.getElementById("main-header");
+      const APP_BASE_URL = window.location.href.split("?")[0].split("#")[0];
+
+      (function checkIncomingChallenge() {
+        const params = new URLSearchParams(window.location.search);
+        const refUser = params.get("ref");
+        const refScore = params.get("score");
+
+        if (refUser) {
+          const banner = document.getElementById("challenge-banner");
+          document.getElementById("cb-ref-name").innerText = refUser.startsWith(
+            "@",
+          )
+            ? refUser
+            : `@${refUser}`;
+          document.getElementById("cb-ref-score").innerText = refScore
+            ? `${refScore}%`
+            : "56%";
+          banner.classList.remove("hidden");
+        }
+      })();
+
+      function showToxiccToast(msg) {
+        const toast = document.getElementById("Toxicc-toast");
+        document.getElementById("toast-msg").innerText = msg;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      document.getElementById("form-init").addEventListener("submit", (e) => {
+        e.preventDefault();
+        user = document.getElementById("inp-username").value.trim();
+        if (!user) {
+          showToxiccToast(
+            "بدون آیدی که نمیشه! اول آیدی اینستات رو بنویس بریم 🎭",
+          );
+          return;
+        }
+        secIntro.classList.add("hidden");
+        secQuiz.classList.remove("hidden");
+        loadQ();
+      });
+
+      function loadQ() {
+        const q = DATABASE[idx];
+        document.getElementById("quiz-cat").innerHTML =
+          `<i class="fa-solid fa-layer-group" style="margin-left: 5px;"></i> ${q.cat}`;
+        document.getElementById("quiz-num").innerText = idx + 1;
+        document.getElementById("progress-fill").style.width =
+          `${((idx + 1) / DATABASE.length) * 100}%`;
+        document.getElementById("quiz-qtext").innerText = q.q;
+        document.getElementById("btn-back").disabled = idx === 0;
+        document.getElementById("btn-next").innerHTML =
+          idx === DATABASE.length - 1
+            ? '<span style="font-family: var(--font-selection)">مشاهده نتیجه</span> <i class="fa-solid fa-chart-pie"></i>'
+            : '<span style="font-family: var(--font-selection)">بعدی</span> <i class="fa-solid fa-arrow-left"></i>';
+
+        const wrap = document.getElementById("options-wrap");
+        wrap.innerHTML = "";
+
+        q.opts.forEach((o, i) => {
+          const active = answers[idx] === i;
+          const node = document.createElement("div");
+          node.className = `option-node ${active ? "active" : ""}`;
+          node.innerHTML = `
+            <div class="radio-dot"></div>
+            <div class="option-text">${o.txt}</div>
+          `;
+          node.onclick = () => {
+            answers[idx] = i;
+            loadQ();
+          };
+          wrap.appendChild(node);
+        });
+      }
+
+      document.getElementById("btn-next").addEventListener("click", () => {
+        if (answers[idx] === null) {
+          const randomWarning =
+            ToxicC_WARNINGS[Math.floor(Math.random() * ToxicC_WARNINGS.length)];
+          showToxiccToast(randomWarning);
+          return;
+        }
+        if (idx < DATABASE.length - 1) {
+          idx++;
+          loadQ();
+        } else {
+          processResult();
+        }
+      });
+
+      document.getElementById("btn-back").addEventListener("click", () => {
+        if (idx > 0) {
+          idx--;
+          loadQ();
+        }
+      });
+
+      function processResult() {
+        secQuiz.classList.add("hidden");
+        secResult.classList.remove("hidden");
+        let total = 0;
+        let totalPich = 0;
+        let totalDorogh = 0;
+        let tags = [];
+
+        answers.forEach((ans, qI) => {
+          const opt = DATABASE[qI].opts[ans];
+          total += opt.pts;
+          totalPich += opt.pich;
+          totalDorogh += opt.dorogh;
+          if (opt.pts > 0) tags.push(opt.tag);
+        });
+
+        calculatedPercent = Math.min(100, Math.round((total / 310) * 100));
+        const pichVal = Math.min(100, Math.round((totalPich / 200) * 100));
+        const doroghVal = Math.min(100, Math.round((totalDorogh / 150) * 100));
+        const refaqatVal = Math.max(0, 100 - calculatedPercent);
+
+        document.getElementById("res-user").innerText = user.startsWith("@")
+          ? user
+          : `@${user}`;
+        document.getElementById("res-id").innerText = Math.floor(
+          1000 + Math.random() * 9000,
+        );
+        document.getElementById("res-percent").innerText =
+          `${calculatedPercent}%`;
+        document.getElementById("m-pich").innerText = `${pichVal}%`;
+        document.getElementById("m-refaqat").innerText = `${refaqatVal}%`;
+        document.getElementById("m-dorogh").innerText = `${doroghVal}%`;
+        document.getElementById("m-pich-bar").style.width = `${pichVal}%`;
+        document.getElementById("m-refaqat-bar").style.width = `${refaqatVal}%`;
+        document.getElementById("m-dorogh-bar").style.width = `${doroghVal}%`;
+
+        const title = document.getElementById("res-title");
+        const body = document.getElementById("res-body");
+
+        if (calculatedPercent <= 20) {
+          title.innerText = "فرشته پاک 😇";
+          body.innerText =
+            "هیچ اثری از تاکسیک بودن در تو نیست! یک رفیق کاملاً سالم، صبور و قابل اعتماد!";
+          confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        } else if (calculatedPercent <= 50) {
+          title.innerText = "نسبتاً نرمال 🧪";
+          body.innerText =
+            "گاهی رو اعصابی ولی در کل رفیق پایه‌ای هستی و خطرناک نیستی!";
+        } else if (calculatedPercent <= 75) {
+          title.innerText = "تاکسیکِ اعظم ☣️";
+          body.innerText =
+            "دوز تاکسیک بودنت بالاست! رفتارهات صبورترین رفقات رو هم به چالش میکشه!";
+        } else {
+          title.innerText = "رادیواکتیو خالص 💀";
+          body.innerText =
+            "سطح تاکسیک بودنت فاجعه ست! بودن در کنارت اعصاب فولادین می‌خواد!";
+        }
+
+        const tWrap = document.getElementById("res-traits-list");
+        tWrap.innerHTML = "";
+        tags.slice(0, 4).forEach((t) => {
+          const chip = document.createElement("span");
+          chip.className = "trait-tag";
+          chip.innerText = t;
+          tWrap.appendChild(chip);
+        });
+
+        document.getElementById("challenge-link-preview").innerText =
+          buildChallengeLink();
+      }
+
+      function buildChallengeLink() {
+        const cleanUser = user.replace("@", "").trim() || "دوستت";
+        return `${APP_BASE_URL}?ref=${encodeURIComponent(cleanUser)}&score=${calculatedPercent}`;
+      }
+
+      function buildCaption() {
+        const link = buildChallengeLink();
+        const friend = document.getElementById("inp-friend").value.trim();
+        const tagLine = friend
+          ? `${friend.startsWith("@") ? friend : "@" + friend} بیا اینجا ببینم چند درصدی 👀\n`
+          : "";
+        return `تست تاکسیک بودن رفاقتی رو زدم، ${calculatedPercent}% از آب دراومدم 💀\n${tagLine}جرأت داری بزنی؟ منتظرتم رفیق...\n👇👇\n${link}`;
+      }
+
+      document.getElementById("inp-friend").addEventListener("input", (e) => {
+        const linkRow = document.getElementById("link-row-wrap");
+        if (e.target.value.trim().length > 0) {
+          linkRow.classList.remove("hidden");
+        } else {
+          linkRow.classList.add("hidden");
+        }
+      });
+
+      async function generateCardCanvas() {
+        const card = document.getElementById("story-card");
+        return await html2canvas(card, {
+          backgroundColor: "#04070d",
+          scale: 2,
+          useCORS: true,
+        });
+      }
+
+      document
+        .getElementById("btn-share-native")
+        .addEventListener("click", async () => {
+          try {
+            const canvas = await generateCardCanvas();
+            canvas.toBlob(async (blob) => {
+              const file = new File([blob], `ToxicFriend-${user}.png`, {
+                type: "image/png",
+              });
+              const customCaption = buildCaption();
+              const link = buildChallengeLink();
+              if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                  files: [file],
+                  title: "چالش رفیق تاکسیک",
+                  text: customCaption,
+                });
+              } else if (navigator.share) {
+                await navigator.share({
+                  title: "ToxicFriend Test",
+                  text: customCaption,
+                  url: link,
+                });
+              } else {
+                await navigator.clipboard.writeText(customCaption);
+                showToxiccToast("کپشن و لینک اختصاصی کپی شد!");
+              }
+            }, "image/png");
+          } catch (err) {
+            console.error(err);
+            showToxiccToast("خطا در فراخوانی اشتراک گذاری سیستم");
+          }
+        });
+
+      document
+        .getElementById("btn-save-img")
+        .addEventListener("click", async () => {
+          const canvas = await generateCardCanvas();
+          const link = document.createElement("a");
+          link.download = `ToxicFriend-${user}.png`;
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        });
+
+      document.getElementById("btn-reset").addEventListener("click", () => {
+        idx = 0;
+        answers.fill(null);
+        document.getElementById("inp-friend").value = "";
+        document.getElementById("link-row-wrap").classList.add("hidden");
+        secResult.classList.add("hidden");
+        secIntro.classList.remove("hidden");
+      });
+
+      document
+        .getElementById("btn-copy-link")
+        .addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeTest(buildChallengeLink());
+            showToxiccToast("لینک چالش اختصاصی کپی شد!");
+          } catch (err) {
+            showToxiccToast("کپی نشد، دستی کپی کن!");
+          }
+        });
+    </script>
+  </body>
+</html>
