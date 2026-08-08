@@ -15,7 +15,7 @@
       content="black-translucent"
     />
     <meta name="apple-mobile-web-app-title" content="ToxicFriend" />
-    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="apple-touch-icon" href="icon-192x192.png" />
     <link rel="manifest" href="manifest.json" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -103,7 +103,6 @@
       body {
         color: var(--text);
         background-color: var(--bg);
-        /* بک گراند جدید و جذاب تر */
         background-image:
           radial-gradient(
             circle at 15% 50%,
@@ -909,7 +908,6 @@
         font-family: var(--font-selection);
       }
 
-      /* استایل مدال PWA */
       .pwa-modal-overlay {
         position: fixed;
         inset: 0;
@@ -1245,16 +1243,12 @@
         });
       }
 
-      // هندل کردن پاپ اپ نصب PWA
       let deferredPrompt;
       const pwaModal = document.getElementById("pwa-install-modal");
 
       window.addEventListener("beforeinstallprompt", (e) => {
-        // جلوگیری از نمایش پاپ اپ پیش فرض مرورگر
         e.preventDefault();
         deferredPrompt = e;
-
-        // اگر کاربر قبلا رد نکرده بود، مدال ما رو نشون بده
         if (!localStorage.getItem("pwa-dismissed")) {
           pwaModal.classList.add("show");
         }
@@ -1769,46 +1763,70 @@
       });
 
       // ==========================================
-      // فیکس ساخت خروجی دقیق برای استوری (1080x1920)
+      // ترفند جدید و اصولی برای سایز استوری (1080x1920)
       // ==========================================
       async function generateCardCanvas() {
         const card = document.getElementById("story-card");
 
-        // ساخت یک دیو برای قرار دادن کارت در مرکز سایز دقیق استوری (۹ به ۱۶)
-        const wrapper = document.createElement("div");
-        wrapper.style.width = "1080px";
-        wrapper.style.height = "1920px";
-        wrapper.style.backgroundColor = "#04070d";
-        wrapper.style.display = "flex";
-        wrapper.style.justifyContent = "center";
-        wrapper.style.alignItems = "center";
-        wrapper.style.position = "absolute";
-        wrapper.style.top = "-9999px"; // مخفی کردن از دید کاربر
-        wrapper.style.left = "0";
-        // یک هاله کوچیک هم برای بک گراند خروجی قرار دادیم
-        wrapper.style.backgroundImage =
-          "radial-gradient(circle at 15% 50%, rgba(163, 230, 53, 0.08), transparent 40%), radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.08), transparent 40%)";
-
-        // کلون کردن کارت نتیجه
-        const cardClone = card.cloneNode(true);
-        // اسکیل کردن سایز کارت تا توی قاب ۱۰۸۰ مناسب و بزرگ دیده بشه
-        cardClone.style.transform = "scale(2.2)";
-        cardClone.style.margin = "0";
-
-        wrapper.appendChild(cardClone);
-        document.body.appendChild(wrapper);
-
-        // گرفتن عکس با html2canvas از کل دیو ۱۰۸۰ در ۱۹۲۰
-        const canvas = await html2canvas(wrapper, {
+        // اول از خود کارت بدون تغییر سایز و با کیفیت بالا عکس می گیریم
+        const originalCanvas = await html2canvas(card, {
           backgroundColor: "#04070d",
-          scale: 1,
+          scale: 3, // کیفیت رو می بریم بالا تا افت نکنه
           useCORS: true,
           logging: false,
         });
 
-        // پاک کردن دیو مخفی بعد از اتمام کار
-        document.body.removeChild(wrapper);
-        return canvas;
+        // بعد یک بوم نقاشی (کارت خام) با سایز دقیق استوری می سازیم
+        const storyCanvas = document.createElement("canvas");
+        storyCanvas.width = 1080;
+        storyCanvas.height = 1920;
+        const ctx = storyCanvas.getContext("2d");
+
+        // رنگ پس زمینه رو مشکی می کنیم
+        ctx.fillStyle = "#09090b";
+        ctx.fillRect(0, 0, 1080, 1920);
+
+        // هاله های نوری خوشگل که توی سایت بود رو اینجا هم می کشیم
+        const grad1 = ctx.createRadialGradient(
+          1080 * 0.15,
+          1920 * 0.5,
+          0,
+          1080 * 0.15,
+          1920 * 0.5,
+          800,
+        );
+        grad1.addColorStop(0, "rgba(163, 230, 53, 0.08)");
+        grad1.addColorStop(1, "transparent");
+        ctx.fillStyle = grad1;
+        ctx.fillRect(0, 0, 1080, 1920);
+
+        const grad2 = ctx.createRadialGradient(
+          1080 * 0.85,
+          1920 * 0.3,
+          0,
+          1080 * 0.85,
+          1920 * 0.3,
+          800,
+        );
+        grad2.addColorStop(0, "rgba(56, 189, 248, 0.08)");
+        grad2.addColorStop(1, "transparent");
+        ctx.fillStyle = grad2;
+        ctx.fillRect(0, 0, 1080, 1920);
+
+        // حالا سایز عکسی که گرفتیم رو متناسب با کادر ۱۰۸0 تنظیم می کنیم
+        // عرض کارت رو میذاریم روی ۹۰۰ پیکسل تا از کناره ها فاصله داشته باشه
+        const targetWidth = 900;
+        const scaleRatio = targetWidth / originalCanvas.width;
+        const targetHeight = originalCanvas.height * scaleRatio;
+
+        // محاسبه می کنیم که دقیقاً وسط کادر استوری قرار بگیره
+        const x = (1080 - targetWidth) / 2;
+        const y = (1920 - targetHeight) / 2;
+
+        // در نهایت عکس کارت رو میذاریم وسط اون بوم استوری
+        ctx.drawImage(originalCanvas, x, y, targetWidth, targetHeight);
+
+        return storyCanvas;
       }
 
       document
